@@ -15,7 +15,7 @@ import study.datajpa.repository.TeamRepository;
 public class AppRunner implements ApplicationRunner {
 
     @Autowired
-    MemberRepository accountRepository;
+    MemberRepository memberRepository;
 
     @Autowired
     TeamRepository teamRepository;
@@ -26,7 +26,7 @@ public class AppRunner implements ApplicationRunner {
         teamRepository.save(team);
 
         Member member = new Member("User01", 20, team);
-        Member savedMember = accountRepository.save(member);
+        Member savedMember = memberRepository.save(member);
 
         System.out.println("savedAccount = " + savedMember);
     }

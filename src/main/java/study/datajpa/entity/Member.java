@@ -13,12 +13,16 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQuery;
 
 @Entity
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @ToString  //연관 관계 없는 필드만
+@NamedQuery(
+        name = "Member.findByName",
+        query = "select m from Member m where m.username = :username")
 public class Member {
 
     @Id
