@@ -6,9 +6,9 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
-import study.datajpa.entity.MemberRepository;
+import study.datajpa.repository.MemberRepository;
 import study.datajpa.entity.Team;
-import study.datajpa.entity.TeamRepository;
+import study.datajpa.repository.TeamRepository;
 
 @Component
 @Transactional
