@@ -20,7 +20,8 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 
 @SpringBootTest(webEnvironment = WebEnvironment.DEFINED_PORT)
 @Transactional
-@Rollback(value = true)  //H2DB를 인메모리로 사용할 경우에는 테스트 종료 후 어차피 사라질것이므로 의미 없다. => 아니네. 테스트간 독립성을 유지하기 위해서는 RollBack 시켜야 하는군.
+@Rollback(value = true)
+//H2DB를 인메모리로 사용할 경우에는 테스트 종료 후 어차피 사라질것이므로 의미 없다. => 아니네. 테스트간 독립성을 유지하기 위해서는 RollBack 시켜야 하는군.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemberRepositoryTest {
 
@@ -108,5 +109,55 @@ class MemberRepositoryTest {
 
         assertThat(result.get(0).getUsername()).isEqualTo("AAA");
         assertThat(result.get(0).getAge()).isEqualTo(10);
+    }
+
+    @Test
+    @Order(32)
+    public void findUsernameList() {
+        createMembers();
+
+        List<String> usernameList = memberRepository.findUsernameList();
+        System.out.println("usernameList = " + usernameList.toString());
+    }
+
+    @Test
+    @Order(33)
+    public void findMemberDto() {
+        createMembers();
+
+        List<MemberDto> memberDtos = memberRepository.findMemberDto();
+
+        for (MemberDto memberDto : memberDtos) {
+            System.out.println("memberDto = " + memberDto);
+        }
+    }
+
+    @Test
+    @Order(34)
+    public void findMemberProjections() {
+        createMembers();
+
+        List<MemberProjections> memberProjections = memberRepository.findMemberProjectionsByUsername("USER_1");
+
+        for (MemberProjections memberProjection : memberProjections) {
+            System.out.println("memberProjection = " + memberProjection);
+        }
+    }
+
+    private void createMembers() {
+        Team teamA = new Team("TeamA");
+        teamRepository.save(teamA);
+        Team teamB = new Team("TeamB");
+        teamRepository.save(teamB);
+
+        Member member;
+        for (int i = 0; i < 5; i++) {
+            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamA);
+            memberRepository.save(member);
+        }
+        for (int i = 5; i < 10; i++) {
+            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamB);
+            memberRepository.save(member);
+        }
     }
 }
