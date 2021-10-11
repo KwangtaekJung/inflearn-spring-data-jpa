@@ -1,5 +1,7 @@
 package study.datajpa.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -29,4 +31,9 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
     List<MemberDto> findMemberDto();
 
     List<MemberProjections> findMemberProjectionsBy();
+
+    Page<Member> findByAgeGreaterThan(int age, Pageable pageable);
+
+    @Query("select m from Member m where m.team.name = :teamName")
+    Page<Member> findByTeamName(@Param("teamName") String teamName, Pageable pageable);
 }

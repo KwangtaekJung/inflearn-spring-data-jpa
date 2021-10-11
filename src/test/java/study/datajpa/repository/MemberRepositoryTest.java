@@ -7,6 +7,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.test.annotation.Rollback;
 import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
@@ -185,21 +188,84 @@ class MemberRepositoryTest {
         }
     }
 
+    @Test
+    @Order(50)
+    public void findByAgeGreaterThan() {
+        createMembers();
+
+//        PageRequest pagerequest = PageRequest.of(0, 5, Sort.unsorted());
+        PageRequest pagerequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "team.name"));
+        Page<Member> memberPage = memberRepository.findByAgeGreaterThan(20, pagerequest);
+
+        System.out.println("=================================");
+        System.out.println("전체 데이터 수: " + memberPage.getTotalElements());
+        System.out.println("전체 페이지 번호: " + memberPage.getTotalPages());
+        System.out.println("현재 페이지 번호: " + memberPage.getNumber());
+        System.out.println("현제 페이지 데이터 수: " + memberPage.getNumberOfElements());
+
+        List<Member> members = memberPage.getContent();
+        for (Member member : members) {
+            System.out.println("member = " + member + " team.name = " + member.getTeam().getName());
+        }
+    }
+
+    @Test
+    @Order(51)
+    public void findByTeamName() {
+        createMembers();
+
+        PageRequest pagerequest = PageRequest.of(0, 5, Sort.by(Sort.Direction.DESC, "team.name"));
+        Page<Member> memberPage = memberRepository.findByTeamName("TeamB", pagerequest);
+
+        System.out.println("=================================");
+        System.out.println("전체 데이터 수: " + memberPage.getTotalElements());
+        System.out.println("전체 페이지 번호: " + memberPage.getTotalPages());
+        System.out.println("현재 페이지 번호: " + memberPage.getNumber());
+        System.out.println("현제 페이지 데이터 수: " + memberPage.getNumberOfElements());
+
+        List<Member> members = memberPage.getContent();
+        for (Member member : members) {
+            System.out.println("member = " + member + " team.name = " + member.getTeam().getName());
+        }
+    }
+
     private void createMembers() {
         Team teamA = new Team("TeamA");
         teamRepository.save(teamA);
         Team teamB = new Team("TeamB");
         teamRepository.save(teamB);
 
-        Member member;
-        for (int i = 0; i < 5; i++) {
-            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamA);
-            memberRepository.save(member);
-        }
-        for (int i = 5; i < 8; i++) {
-            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamB);
-            memberRepository.save(member);
-        }
+//        Member member;
+//        for (int i = 0; i < 5; i++) {
+//            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamA);
+//            memberRepository.save(member);
+//        }
+//        for (int i = 5; i < 8; i++) {
+//            member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamB);
+//            memberRepository.save(member);
+//        }
+
+        memberRepository.save(new Member("Member01", 45, teamA));
+        memberRepository.save(new Member("Member02", 43, teamB));
+        memberRepository.save(new Member("Member03", 40, teamA));
+        memberRepository.save(new Member("Member04", 50, teamB));
+        memberRepository.save(new Member("Member05", 55, teamA));
+        memberRepository.save(new Member("Member06", 38, teamB));
+        memberRepository.save(new Member("Member07", 30, teamA));
+        memberRepository.save(new Member("Member08", 10, teamB));
+        memberRepository.save(new Member("Member09", 20, teamA));
+        memberRepository.save(new Member("Member10", 15, teamB));
+
+        memberRepository.save(new Member("Member11", 46, teamA));
+        memberRepository.save(new Member("Member12", 43, teamB));
+        memberRepository.save(new Member("Member13", 49, teamA));
+        memberRepository.save(new Member("Member14", 51, teamB));
+        memberRepository.save(new Member("Member15", 52, teamA));
+        memberRepository.save(new Member("Member16", 34, teamB));
+        memberRepository.save(new Member("Member17", 34, teamA));
+        memberRepository.save(new Member("Member18", 15, teamB));
+        memberRepository.save(new Member("Member19", 23, teamA));
+        memberRepository.save(new Member("Member20", 11, teamB));
 
         // 정확한 테스트를 위해 영속성 컨텍스트는 클리어시켜둔다.
         entityManager.flush();

@@ -19,7 +19,7 @@ import javax.persistence.NamedQuery;
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
-@ToString  //연관 관계 없는 필드만
+@ToString(exclude = "team")  //연관 관계 없는 필드만
 @NamedQuery(
         name = "Member.findByName",
         query = "select m from Member m where m.username = :username")
