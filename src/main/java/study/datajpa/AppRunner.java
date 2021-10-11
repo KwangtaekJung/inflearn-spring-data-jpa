@@ -22,12 +22,13 @@ public class AppRunner implements ApplicationRunner {
 
     @Override
     public void run(ApplicationArguments args) throws Exception {
-        Team team = new Team("TeamA");
-        teamRepository.save(team);
-
-        Member member = new Member("User01", 20, team);
-        Member savedMember = memberRepository.save(member);
-
-        System.out.println("savedAccount = " + savedMember);
+        //Test에 영향을 줄 수 있으므로 주석처리한다.
+//        Team team = new Team("TeamA");
+//        teamRepository.save(team);
+//
+//        Member member = new Member("User01", 20, team);
+//        Member savedMember = memberRepository.save(member);
+//
+//        System.out.println("savedAccount = " + savedMember);
     }
 }

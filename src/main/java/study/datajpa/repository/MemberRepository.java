@@ -28,5 +28,5 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
         "from Member m join m.team t")
     List<MemberDto> findMemberDto();
 
-    List<MemberProjections> findMemberProjectionsByUsername(String username);
+    List<MemberProjections> findMemberProjectionsBy();
 }

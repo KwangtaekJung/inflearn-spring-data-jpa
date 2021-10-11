@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import study.datajpa.entity.Member;
 import study.datajpa.entity.Team;
 
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 
@@ -24,6 +25,9 @@ import static org.springframework.boot.test.context.SpringBootTest.WebEnvironmen
 //H2DB를 인메모리로 사용할 경우에는 테스트 종료 후 어차피 사라질것이므로 의미 없다. => 아니네. 테스트간 독립성을 유지하기 위해서는 RollBack 시켜야 하는군.
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 class MemberRepositoryTest {
+
+    @Autowired
+    EntityManager entityManager;
 
     @Autowired
     MemberRepository memberRepository;
@@ -137,10 +141,47 @@ class MemberRepositoryTest {
     public void findMemberProjections() {
         createMembers();
 
-        List<MemberProjections> memberProjections = memberRepository.findMemberProjectionsByUsername("USER_1");
+        List<MemberProjections> memberProjections = memberRepository.findMemberProjectionsBy();
 
         for (MemberProjections memberProjection : memberProjections) {
             System.out.println("memberProjection = " + memberProjection);
+        }
+    }
+
+    @Test
+    @Order(40)
+    public void findTeam() {
+        createMembers();
+
+        List<Team> teams = teamRepository.findAll();
+        for (Team team : teams) {
+            System.out.println("team.getName() = " + team.getName());
+            System.out.println("team.getMembers().size() = " + team.getMembers().size());
+        }
+    }
+
+    @Test
+    @Order(41)
+    public void findTeamDto() {
+        createMembers();
+
+        List<TeamDto> teamDtos = teamRepository.findTeamDto();
+
+        for (TeamDto teamDto : teamDtos) {
+            System.out.println("teamDto = " + teamDto);
+        }
+    }
+
+    @Test
+    @Order(42)
+    public void findTeamProjections() {
+        createMembers();
+
+        List<TeamProjections> teamProjections = teamRepository.findTeamProjectionsBy();
+
+        for (TeamProjections teamProjection : teamProjections) {
+            System.out.println("teamProjection.getName() = " + teamProjection.getName());
+            System.out.println("teamProjection.getMemberCount() = " + teamProjection.getMemberCount());
         }
     }
 
@@ -155,9 +196,13 @@ class MemberRepositoryTest {
             member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamA);
             memberRepository.save(member);
         }
-        for (int i = 5; i < 10; i++) {
+        for (int i = 5; i < 8; i++) {
             member = new Member("USER_" + i, (10 + (int) (Math.random() * 100)), teamB);
             memberRepository.save(member);
         }
+
+        // 정확한 테스트를 위해 영속성 컨텍스트는 클리어시켜둔다.
+        entityManager.flush();
+        entityManager.clear();
     }
 }
